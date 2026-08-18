@@ -1,36 +1,27 @@
-import logging
-import asyncio
-from telegram.ext import ApplicationBuilder
+import time
+import requests
 
 # Aapka Bot Token aur Channel Username
 TOKEN = '8893964428:AAgcj_a0IYd59_XrBfQfSI3KfRQGMuabK_Y'
 CHANNEL_USERNAME = '@malikzeshanforexsignal'
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
-async def send_test_message(context):
+def send_telegram_message():
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    payload = {
+        "chat_id": CHANNEL_USERNAME,
+        "text": "🚀 **MALIK ZESHAN FOREX - GITHUB TEST LIVE!** 🚀\n\n✅ Bot successfully triggered via GitHub Actions!\n📈 Status: Working perfectly.",
+        "parse_mode": "Markdown"
+    }
     try:
-        message = (
-            "🚀 **MALIK ZESHAN FOREX - TESTING LIVE!** 🚀\n\n"
-            "✅ Bot successfully connected!\n"
-            "⏱️ Interval: 5 Seconds\n"
-            "📈 Status: Monitoring Mode Active\n\n"
-            "_Yeh message testing ke liye bheja ja raha hai._"
-        )
-        await context.bot.send_message(chat_id=CHANNEL_USERNAME, text=message, parse_mode='Markdown')
-        print("Test message sent successfully!")
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            print("Message sent successfully to channel!")
+        else:
+            print(f"Failed to send message: {response.text}")
     except Exception as e:
-        print(f"Error sending message: {e}")
+        print(f"Error: {e}")
 
-async def main():
-    application = ApplicationBuilder().token(TOKEN).build()
-    job_queue = application.job_queue
-    
-    # Har 5 second baad message bhejne ka job set kiya hai
-    job_queue.run_repeating(send_test_message, interval=5, first=1)
-    
-    print("Bot is running... Testing messages started!")
-    await application.run_polling()
-
-if __name__ == '__main__':
-    asyncio.run(main())
+if __name__ == "__main__":
+    print("Bot script started...")
+    send_telegram_message()
+    print("Execution finished.")
